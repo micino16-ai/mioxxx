@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Il Commercialista Smarrito</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f4f4f9;
+      color: #333;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+
+    header {
+      background-color: #1e2a38;
+      color: white;
+      padding: 20px;
+      font-size: 1.8em;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 30px auto;
+      padding: 20px;
+    }
+
+    .folders {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .folder {
+      background-color: #ffe599;
+      border: 2px solid #e6b800;
+      border-radius: 10px;
+      padding: 30px;
+      width: 150px;
+      cursor: pointer;
+      transition: transform 0.2s, background-color 0.2s;
+    }
+
+    .folder:hover {
+      background-color: #ffcc33;
+      transform: scale(1.05);
+    }
+
+    #output, #passwordScreen, #nextContent, #finalContent, #foglio {
+      display: none;
+      margin-top: 30px;
+      padding: 20px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    input {
+      padding: 10px;
+      font-size: 1em;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      width: 200px;
+      text-align: center;
+    }
+
+    button {
+      background-color: #1e2a38;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 10px 20px;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background 0.2s;
+    }
+
+    button:hover {
+      background-color: #2b3d54;
+    }
+
+    .fail {
+      color: red;
+      font-weight: bold;
+    }
+
+    .success {
+      color: green;
+      font-weight: bold;
+    }
+
+    .note {
+      font-style: italic;
+    }
+
+    @keyframes glitch {
+      0% { background-color: #f4f4f9; }
+      50% { background-color: #ff6666; }
+      100% { background-color: #f4f4f9; }
+    }
+
+    /* Foglietto finale */
+    #foglio {
+      background: #fff;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      padding: 40px;
+      max-width: 500px;
+      margin: 50px auto;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      font-size: 1.2em;
+    }
+  </style>
+</head>
+<body>
+
+  <header>🗂️ MISSIONE FINALE</header>
+
+  <div class="container" id="intro">
+    <p>
+    Il Gatto delle Tasse si è arreso, ma purtroppo non ricorda più dove ha messo il regalo... Per fortuna se l'era segnato sul computer! Ma... Non sa più in quale cartella 😭. Ti affido il suo computer, mi raccomando fai in fretta!
+    </p>
+
+    <div class="folders">
+      <div class="folder" onclick="openFolder(1)">Cartella 1</div>
+      <div class="folder" onclick="openFolder(2)">Cartella 2</div>
+      <div class="folder" onclick="openFolder(3)">Cartella 3</div>
+    </div>
+
+    <div id="output"></div>
+  </div>
+
+  <div id="passwordScreen">
+    <p>🔒 La cartella è protetta da password.<br>Inserisci la password per accedere:</p>
+    <input type="text" id="passwordInput" placeholder="Password">
+    <button onclick="checkPassword()">Sblocca</button>
+    <br><button onclick="backToFolders()">↩️ Torna alle cartelle</button>
+    <p id="passwordMessage"></p>
+  </div>
+
+  <div id="nextContent">
+    <p>Bravo, sei riuscito a sbloccare la cartella giusta! Ma a quanto pare è solo l'inizio...</p>
+    <div class="folders">
+      <div class="folder" onclick="openNextFolder(1)">Cartella A</div>
+      <div class="folder" onclick="openNextFolder(2)">Cartella B</div>
+      <div class="folder" onclick="openNextFolder(3)">Cartella C</div>
+    </div>
+    <div id="nextOutput"></div>
+  </div>
+
+  <div id="finalContent">
+    <p>🧮 Risolvi l'indovinello e clicca sulla cartella giusta!</p>
+    <p><em>Chiudi ogni anno, ma non sei una porta.<br>
+    Mostri i numeri, ma non sei una calcolatrice.<br>
+    Tutti ti temono a fine esercizio… chi sei?</em></p>
+
+    <div class="folders">
+      <div class="folder" onclick="wrongFinal()">Dichiarazione</div>
+      <div class="folder" onclick="wrongFinal()">Fattura</div>
+      <div class="folder" onclick="openFoglio()">Bilancio</div>
+    </div>
+
+    <div id="finalMessage"></div>
+  </div>
+
+  <div id="foglio">
+    <p><em>🎉Complimenti! Hai trovato il file con le coordinate del posto dove il Gatto delle Tasse ha nascosto il regalo! Non ti resta che andare a riprenderti il regalo! Veloce, prima che ti scopra!!</em></p>
+    <p>📍 Coordinate: <a href="https://www.google.com/maps?q=45.3085117,9.7214818" target="_blank">45.3085117, 9.7214818</a></p>
+    <br><button onclick="resetToStart()">🔁 Torna all'inizio</button>
+  </div>
+
+  <script>
+    function openFolder(num) {
+      const output = document.getElementById("output");
+      output.style.display = "block";
+
+      if (num === 1) {
+        output.innerHTML = `<div class="fail">⚠️ Attenzione! La cartella contiene un virus! Il sistema si è bloccato...</div>
+        <br><button onclick="resetToStart()">🔁 Ricomincia da capo</button>`;
+        document.body.style.animation = "glitch 0.2s infinite alternate";
+        setTimeout(() => document.body.style.animation = "none", 1500);
+      } else if (num === 2) {
+        document.getElementById("intro").style.display = "none";
+        document.getElementById("passwordScreen").style.display = "block";
+      } else {
+        output.innerHTML = `<p class="note">Nella cartella trovi vari documenti vecchi, tra cui uno con scritto <em>"la password sei tu"</em>.</p>`;
+      }
+    }
+
+    function backToFolders() {
+      document.getElementById("passwordScreen").style.display = "none";
+      document.getElementById("intro").style.display = "block";
+    }
+
+    function checkPassword() {
+      const input = document.getElementById("passwordInput").value.trim();
+      const msg = document.getElementById("passwordMessage");
+      if (input === "Nicolò") {
+        msg.innerHTML = "✅ Accesso consentito!";
+        document.getElementById("passwordScreen").style.display = "none";
+        document.getElementById("nextContent").style.display = "block";
+      } else {
+        msg.innerHTML = "❌ Password errata.";
+      }
+    }
+
+    function openNextFolder(num) {
+      const nextOutput = document.getElementById("nextOutput");
+      nextOutput.style.display = "block";
+
+      if (num === 2) {
+        nextOutput.innerHTML = `
+          🔒 La cartella è bloccata.<br><br>
+          Indovinello: <strong>Hai 12 clienti che ti devono 120 euro ciascuno. Ti chiamano X, Y e Z e ti dicono che non possono pagarti. W ti dà la metà e K un terzo della metà. A quanti soldi devi rinunciare?</strong><br><br>
+          <input type="text" id="answerInput" placeholder="Risposta">
+          <button onclick="checkAnswer()">Sblocca</button>
+          <p id="answerMessage"></p>
+        `;
+      } else {
+        nextOutput.innerHTML = `
+          📂 Dentro trovi "NoteClienti2021.txt" e "PreventiviAntichi.zip"...<br>
+          Nessun indizio utile qui.`;
+      }
+    }
+
+    function checkAnswer() {
+      const ans = document.getElementById("answerInput").value.trim();
+      const msg = document.getElementById("answerMessage");
+      if (ans === "520") {
+        msg.innerHTML = "✅ Esatto! Hai sbloccato la prossima parte della storia!";
+        document.getElementById("nextContent").style.display = "none";
+        document.getElementById("finalContent").style.display = "block";
+      } else {
+        msg.innerHTML = "❌ Risposta errata.";
+      }
+    }
+
+    function wrongFinal() {
+      const finalMsg = document.getElementById("finalMessage");
+      finalMsg.innerHTML = `
+        <div class="fail">❌ Hai scelto la cartella sbagliata! Devi ricominciare da capo.</div>
+        <br><button onclick="resetToStart()">🔁 Ricomincia</button>
+      `;
+    }
+
+    function openFoglio() {
+      document.getElementById("finalContent").style.display = "none";
+      document.getElementById("foglio").style.display = "block";
+    }
+
+    function resetToStart() {
+      document.getElementById("intro").style.display = "block";
+      document.getElementById("output").style.display = "none";
+      document.getElementById("passwordScreen").style.display = "none";
+      document.getElementById("nextContent").style.display = "none";
+      document.getElementById("finalContent").style.display = "none";
+      document.getElementById("foglio").style.display = "none";
+    }
+  </script>
+
+</body>
+</html>
